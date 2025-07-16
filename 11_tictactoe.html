@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tictactoe</title>
+    <style>
+        table{
+            border-collapse: collapse;
+        }
+        td{
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const {body} = document;
+        const $table = document.createElement('table');
+        const $result = document.createElement('div'); // 결과창
+        const rows = [];
+
+        let turn = 'O'; // 현재 턴
+
+        const checkWinner = (target) => { // 여기서 target 은 td셀
+            const rowIndex = target.parentNode.rowIndex; // 클릭한 td의 행 인덱스(내장속성 rowIndex)
+            const colIndex = target.cellIndex; // 클릭한 td의 열 인덱스
+
+            // 현재 행, 열, 대각선 체크 일일이 idx로 rows[][] 노가다 해도 되긴함 
+            // 하지만, 배열 메서드를 사용하면 더 간단하게 작성할 수 있어.
+            const row = rows[rowIndex]; // 가로줄 전체 배열
+            const col = rows.map(r => r[colIndex]); // 세로줄 전체 배열 (map 메서드는 새 배열 반환)
+            const diag1 = rows.map((r, i) => r[i]); // 왼쪽 위에서 오른쪽 아래 대각선
+            const diag2 = rows.map((r, i) => r[2 - i]); // 오른쪽 위에서 왼쪽 아래 대각선
+
+            const checkLine = (line) => line.every(cell => cell.textContent === turn);
+
+            return checkLine(row) || checkLine(col) || checkLine(diag1) || checkLine(diag2);
+            
+        };
+
+        const callback = (e) =>{
+            if(e.target.textContent !== '') {
+                console.log('이미 선택된 칸입니다.');
+                return; // 이미 선택된 칸은 무시
+            }
+            else{
+                console.log('빈칸입니다.');
+                e.target.textContent = turn; // 현재 턴의 표시
+               
+                const hasWinner = checkWinner(e.target); // 승리 여부 확인
+                if(hasWinner) {
+                    $result.textContent = `${turn} 님이 승리하셨습니다!`;
+                    $table.removeEventListener('click', callback); // 승리 후 클릭 이벤트 제거
+                    return;
+                }
+                const isDraw = rows.flat().every(cell => cell.textContent !== "");
+                if(isDraw) {
+                    $result.textContent = '무승부입니다!';
+                    $table.removeEventListener('click', callback); // 무승부 후 클릭 이벤트 제거
+                    return;
+                }
+
+
+                // 컴퓨터로 턴 넘기기
+                turn = turn === 'O' ? 'X' : 'O'; // 턴 변경
+                const emptyCells = rows.flat().filter(cell => cell.textContent === ""); // 빈 칸 찾기
+                const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)]; // 랜덤으로 빈 칸 선택
+                randomCell.textContent = turn; // 컴퓨터의 턴 표시
+                const hasComputerWinner = checkWinner(randomCell); // 컴퓨터 승리 여부 확인
+                if(hasComputerWinner) {
+                    $result.textContent = `${turn} 님이 승리하셨습니다!`;
+                    $table.removeEventListener('click', callback); // 승리 후 클릭 이벤트 제거
+                    return;
+                }
+                const isComputerDraw = rows.flat().every(cell => cell.textContent !== "");
+                if(isComputerDraw) {
+                    $result.textContent = '무승부입니다!';
+                    $table.removeEventListener('click', callback); // 무승부 후 클릭 이벤트 제거
+                    return;
+                }
+
+                turn = turn === 'O' ? 'X' : 'O'; // 다시 플레이어 턴으로 변경
+            }
+        }
+
+
+        for(let i = 0; i < 3; i++) {
+           const $tr = document.createElement('tr');
+           const $cols = [];
+              for(let j = 0; j < 3; j++) {
+                const $td = document.createElement('td');
+                // $td.addEventListener('click', callback); // 클릭 이벤트 리스너 추가
+                $cols.push($td); // 각 셀(td)을 나중에 쉽게 찾고 조작하려고 배열로 모아두는 거야.
+                $tr.appendChild($td);
+              }
+            rows.push($cols);
+            $table.appendChild($tr); 
+            $table.addEventListener('click', callback); 
+            // 클릭 이벤트가 <td>에서 발생해도, 이벤트가 부모 요소인 <table>까지 
+            // 버블링(전파)돼서 <table>에 등록된 이벤트가 실행됨.
+            // 이벤트를 한 번만 걸고 이벤트 버블링으로 처리하는 방식을 많이쓴다.
+        }
+        body.appendChild($table);
+        body.appendChild($result);
+
+       
+
+
+</script>
+    
+</body>
+</html>

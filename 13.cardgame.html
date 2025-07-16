@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardgame</title>
+    <style>
+        .card{
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            width: 80px;
+            height: 100px;
+            perspective: 140px;/
+        }
+        /* .card는 perspective가 적용된 3D 공간의 기준이자 회전하지 않는 부모  
+        .card-inner가 실제로 3D 회전을 수행하는 자식 (transform이 적용되는 부분) */
+        .card-inner{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;  
+            /* 전환효과를 변환 효과에 삽입  */
+            transform-style: preserve-3d; 
+            /* 자식들도 입체적으로 배치 유지 */
+        }
+        .card.flipped .card-inner{
+            transform: rotateY(180deg);
+        }
+        .card-back{
+            background: navy;
+        }
+        .card-front, .card-back{
+            position: absolute; 
+            /* 자식 요소인 .card-front와 .card-back은 position: absolute;인데,
+            absolute는 가장 가까운 relative 조상을 기준으로 위치가 잡혀
+            그래서 .card-inner를 relative로 만들어주면,
+            앞면과 뒷면이 .card-inner의 100% 폭과 높이에 맞게 딱 겹쳐지게 되는 거야. */
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+            backface-visibility: hidden; 
+            /* 뒷면이 안보이게 하는 속성 */
+        }
+        .card-front{
+            transform:rotateY(180deg);
+            /* 기본은 앞면이 보이지않게 하기위해 180도 회전시켜 뒷면이 앞으로 오게해놓음 */
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper"></div>
+    <script>
+        const $wrapper = document.querySelector('#wrapper');
+        const total = 12;
+        const colors = ['red','orange','yellow','green','white','pink'];
+        let colorCopy = colors.concat(colors); // 두배로 늘어난 배열이 된다 (자기 배열 복사)
+        let shuffled =[];
+        let clicked =[];
+        let completed =[];
+        let clickable = false;
+        let startTime,endTime;
+
+        function shuffle(){
+            while(colorCopy.length>0){
+                const idx = Math.floor(Math.random()*colorCopy.length);
+                // shuffled = shuffled.concat(colorCopy.splice(idx,1));
+                const spliced = colorCopy.splice(idx,1)[0];
+                shuffled.push(spliced);
+            }
+        }
+        function createCard(i){
+            const card = document.createElement('div');
+            card.className='card';
+            const cardInner = document.createElement('div');
+            cardInner.className = 'card-inner';
+            const cardBack = document.createElement('div');
+            cardBack.className = 'card-back';
+            const cardFront = document.createElement('div');
+            cardFront.className = 'card-front';
+            cardFront.style.backgroundColor = shuffled[i];
+            cardInner.appendChild(cardBack);
+            cardInner.appendChild(cardFront);
+            card.appendChild(cardInner);
+            return card;
+        }
+        function startGame(){
+            shuffle();
+            for(let i = 0; i<total; i++){
+                const card = createCard(i);
+                card.addEventListener('click',onclickCard);
+                $wrapper.appendChild(card);
+            }
+
+            document.querySelectorAll('.card').forEach((card,idx) => {
+                setTimeout(()=>{
+                    card.classList.add('flipped');
+                },1000 + 100*idx);
+            });
+
+            setTimeout(()=>{
+                document.querySelectorAll('.card').forEach((card) => {
+                card.classList.remove('flipped');
+                 });
+                 clickable = true;
+                 startTime = new Date();
+
+            },5000);
+
+           
+        }
+
+        function reset(){
+            $wrapper.innerHTML = '';
+            colorCopy = colors.concat(colors);
+            shuffled=[];
+            completed=[];
+            clickable = false;
+            startGame();
+        }
+
+        function onclickCard(){
+            if(!clickable || completed.includes(this) || clicked.includes(this)) 
+                return;
+
+            this.classList.toggle('flipped');
+            clicked.push(this); // 만약 화살표 함수로 바꾼 다면 this가 card객체를 가리키지 않게된다. 주의 
+            if(clicked.length !== 2)
+                return;
+            const color1 = clicked[0].querySelector('.card-front').style.backgroundColor;
+            const color2 = clicked[1].querySelector('.card-front').style.backgroundColor;
+            if(color1 === color2){
+                completed.push(clicked[0]);
+                completed.push(clicked[1]);
+                clicked = [];
+            if(completed.length !== total)
+                return;
+            endTime = new Date();
+            const time = endTime - startTime;
+            setTimeout(()=>{
+                alert(`성공까지 걸린 시간은 ${time}ms입니다.`);
+                reset();
+            },500);
+            }
+            clickable = false;
+
+            setTimeout(()=>{
+                clicked[0].classList.remove('flipped');
+                clicked[1].classList.remove('flipped');
+                clicked = [];
+                clickable = true;
+            },500);
+        }
+
+        startGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>response-speed</title>
+    <style>
+        #screen {
+            /* width: 100%; */
+            height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+        }
+        .waiting {
+            background-color: blue;
+            color: white;
+        }
+        .ready {
+            background-color: red;
+            color: white;
+        }
+        .now {
+            background-color: green;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="screen" class="waiting">클릭해서 테스트를 시작하세요 !!</div>
+    <div id="result"></div>
+    <script>
+        const $screen = document.querySelector('#screen');
+        const $result = document.querySelector('#result');
+        let startTime, endTime, timeoutid;
+        const record = [];
+
+        let clickable = true;
+
+        $screen.addEventListener('click', () => {
+            if(!clickable) return;
+            if($screen.classList.contains('waiting')){
+                $screen.classList.replace('waiting', 'ready');
+                $screen.textContent = '초록색이 되면 클릭하세요!';
+                timeoutid = setTimeout(() => {
+                    $screen.classList.replace('ready', 'now');
+                    startTime = new Date();
+                    $screen.textContent = '클릭하세요!';
+                }, Math.random() * 1000 + 2000); // 2초에서 3초 사이
+            }
+            else if($screen.classList.contains('ready')){ // 준비 일때 눌렀을 경우
+                clearTimeout(timeoutid);
+                $screen.classList.replace('ready', 'waiting');
+                $screen.textContent = '너무 성급하군요! 잠시후에 다시 시작하세요!';
+                clickable = false;
+                  setTimeout(() => {
+                    $screen.textContent = '클릭해서 테스트를 시작하세요 !!';
+                    clickable = true;
+                }, 2000);
+            } 
+            else if($screen.classList.contains('now')){
+                endTime = new Date();
+                const timeTaken = endTime - startTime;
+                record.push(timeTaken);
+                const averageTime = record.reduce((a, b) => a + b) / record.length;
+                const toprank = record.sort((a, b) => a - b).slice(0, 5);
+                $result.textContent = `반응 시간: ${timeTaken}ms, 평균 반응 시간: ${averageTime}ms`;
+                toprank.forEach((time,idx) => {
+                    // $result.append(document.createElement('br'),`${idx + 1}위: ${time}ms`);
+                    $result.insertAdjacentHTML('beforeend', `<br>${idx + 1}위: ${time}ms`);
+                });
+
+                // startTime = null;
+                // endTime = null;
+                $screen.classList.replace('now', 'waiting');
+                $screen.textContent = '클릭하여 테스트를 시작하세요!';
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- ✅ 왜 insertAdjacentHTML을 쓰나?
+innerHTML += ... 방식	insertAdjacentHTML 방식
+전체 HTML 재렌더링	       기존 DOM을 건드리지 않고 삽입
+상대적으로 느림	           상대적으로 빠름
+이벤트 핸들러 사라짐	    이벤트 핸들러 유지됨 -->
+

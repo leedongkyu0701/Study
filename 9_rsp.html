@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rsp</title>
+    <style>
+        #computer {
+            width: 165px;
+            height: 200px;
+            /* background-image: url('./rsp.png');
+            background-position: 0 0;
+            background-size: auto 200px; */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="computer"></div>
+    <div id="user">
+        <button id="rock">바위</button>
+        <button id="scissors">가위</button>     
+        <button id="paper">보</button>
+    </div>
+    <div id="score"></div>
+    <script>
+        const $computer = document.querySelector('#computer');
+        const $rock = document.querySelector('#rock');
+        const $scissors = document.querySelector('#scissors');  
+        const $paper = document.querySelector('#paper');
+        const $score = document.querySelector('#score');
+        const url = './rsp.png';
+        $computer.style.background = `url(${url}) 0 0`;
+        $computer.style.backgroundSize = 'auto 200px';
+        const rspX = {
+            scissors: 0,
+            rock: '-220px',
+            paper: '-440px', 
+        }
+        let computerChoice = 'scissors';
+        const changeComputer = () => {
+            const randomNumber = Math.floor(Math.random() * 3);
+            if (randomNumber === 0) {
+                computerChoice = 'scissors';
+                $computer.style.backgroundPosition = `${rspX.scissors} 0`;
+            } else if (randomNumber === 1) {
+                computerChoice = 'rock';
+                $computer.style.backgroundPosition = `${rspX.rock} 0`;
+            } else {
+                computerChoice = 'paper';
+                $computer.style.backgroundPosition = `${rspX.paper} 0`;
+            }
+        };
+
+        let intervalid = setInterval(changeComputer, 50);
+        let clicked = true;
+        let score = 0;
+        let computerscore = 0;
+
+        const clickButton = (event) =>{
+            if(clicked) {
+                clicked = false;
+                clearInterval(intervalid);
+                
+                
+                const userChoice = event.target.id;
+                const scoreTable = {
+                    scissors:1,
+                    rock: 0,
+                    paper: -1,
+                }
+                const myScore = scoreTable[userChoice];
+                const computerScore = scoreTable[computerChoice];
+                const diff = myScore - computerScore;
+                if(diff === 0) {
+                    $score.textContent = `비겼습니다! 사용자 : ${score}점, 컴퓨터 : ${computerscore}점 입니다.`;
+                } else if([-1, 2].includes(diff)) {
+                    score++;
+                    $score.textContent = `이겼습니다! 사용자 : ${score}점, 컴퓨터 : ${computerscore}점 입니다.`;
+                } else {
+                    computerscore++;
+                    $score.textContent = `졌습니다! 사용자 : ${score}점, 컴퓨터 : ${computerscore}점 입니다.`;
+                }
+
+                if(score === 3 || computerscore === 3) {
+                    if(score > computerscore) {
+                        alert('사용자가 이겼습니다!');
+                    } else {
+                        alert('컴퓨터가 이겼습니다!');
+                    }
+                    score = 0;
+                    computerscore = 0;
+                }
+            
+                setTimeout(() => {
+                    clicked = true;
+                    intervalid = setInterval(changeComputer, 50);
+                }, 2000);
+            }
+        }
+
+        $rock.addEventListener('click',clickButton);
+        $scissors.addEventListener('click', clickButton);
+        $paper.addEventListener('click', clickButton);
+
+
+
+    </script>
+</body>
+</html>

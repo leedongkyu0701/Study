@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>number-baseball</title>
+</head>
+<body>
+    <form id="form">
+        <input type="text" id="input">
+        <button>입력</button>
+    </form>
+    <div id="logs"></div>
+    <script>
+        const $input = document.querySelector('#input');
+        const $form = document.querySelector('#form');
+        const $logs = document.querySelector('#logs');
+        const numbers = Array(10).fill().map((_, i) => i + 1);
+        // const numbers = Array.from({ length: 10 }, (_, i) => i + 1); 최근에 많이쓴다고함 
+        const answer = [];
+        let out = 0;
+  
+        while (answer.length < 4) {
+            // const randomNumber = numbers.splice(Math.floor(Math.random() * numbers.length), 1)[0];
+            // answer.push(randomNumber);
+            let idx = Math.floor(Math.random() * numbers.length);
+            answer.push(numbers[idx]);
+            numbers.splice(idx, 1);
+        }
+        console.log(answer);
+        const tries = [];
+        const checkValid = (value) => {
+            if (value.length !== 4) {
+                alert('4자리 숫자를 입력해야 합니다.');
+                return false;
+            }
+            if (new Set(value).size !== 4) {
+                alert('중복된 숫자가 있습니다.');
+                return false;
+            }
+            if(tries.includes(value)) {
+                alert('이미 시도한 숫자입니다.');
+               return false;
+            }
+
+            return true;
+        };
+        
+        $form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const value = $input.value;
+            $input.value = '';
+            const valid = checkValid(value);
+            if (!valid) {
+                return;
+            }
+            if(value === answer.join('')){
+                $logs.textContent = '홈런! 정답은 ' + answer.join('') + '입니다.';
+                // $input.disabled = true;
+                return;
+            }
+            tries.push(value);
+            if (tries.length >= 10) {
+                const msg = document.createTextNode('10번 넘게 틀려서 실패! 정답은 ' + answer.join('') + '입니다.');
+                // const msg = document.createTextNode(`10번 넘게 틀려서 실패! 정답은 ${answer.join('')}입니다.`);
+                $logs.appendChild(msg);
+
+                // $logs.append('10번 넘게 틀려서 실패! 정답은 ' + answer.join('') + '입니다.');
+                // 요즘은 append 더 많이쓴다고함
+                return;
+            }
+
+            let strike = 0;
+            let ball = 0;
+
+            for(let i = 0; i < 4; i++) {
+                if (Number(value[i]) === answer[i]) {
+                    strike++;
+                } else if (answer.includes(Number(value[i]))) {
+                    ball++;
+                }
+            }
+             if(strike === 0 && ball === 0) {
+                out++;
+             }
+             if(out === 3){
+                const msg = document.createTextNode('아웃! 3아웃이므로 게임이 종료됩니다. 정답은 ' + answer.join('') + '입니다.');
+                $logs.appendChild(msg);
+                return;
+                // $input.disabled = true;
+            }
+
+            // $logs.append(`${value} : ${strike} 스트라이크, ${ball} 볼입니다.`,
+            // document.createElement('br'));
+
+            const result = document.createElement('div');
+            result.textContent = `${value} : ${strike} 스트라이크, ${ball} 볼입니다.`;
+            $logs.append(result);
+           
+         
+
+        });
+
+    </script>
+</body>
+</html>

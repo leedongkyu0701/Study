@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotto</title>
+    <style>
+        .ball{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            text-align: center;
+            line-height: 30px;
+            margin: 5px;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="form">
+        <input name="inputtag" id="input" placeholder="로또 번호를 입력하세요 (예: 1,2,3,4,5,6)" />
+        <button>제출</button>
+    </form>
+    <div id="result">당첨 숫자: </div>
+    <div id="bonus">보너스 숫자: </div>
+
+    <script>
+        const $form = document.querySelector('#form');
+        const $input = document.querySelector('#input');
+        const $result = document.querySelector('#result');
+        const $bonus = document.querySelector('#bonus');
+        const $button = document.querySelector('button');
+
+        
+        const delay = (ms) => new Promise((resolve,reject) => {
+             if (ms > 10000) {
+                reject(new Error('⏰ delay 시간이 너무 깁니다! (10초 이하로만 사용하세요)'));
+            } else {
+                setTimeout(resolve, ms);
+            }
+        });
+        
+        const drawBalls = (number, $target) => {
+        const $ball = document.createElement('div');
+        $ball.className = 'ball';
+        $ball.textContent = number;
+        if(number < 10) {
+            $ball.style.backgroundColor = '#ffcccc'; // 1~9번은 연한 빨강
+        } else if(number < 20) {
+            $ball.style.backgroundColor = '#ccffcc'; // 10~19번은 연한 초록
+        } else if(number < 30) {
+            $ball.style.backgroundColor = '#ccccff'; // 20~29번은 연한 파랑
+        } else if(number < 40) {
+            $ball.style.backgroundColor = '#ffffcc'; // 30~39번은 연한 노랑
+        } else {
+            $ball.style.backgroundColor = '#ffccff'; // 40~45번은 연한 보라
+        }
+        $target.appendChild($ball);
+        };
+
+        $form.addEventListener('submit', async(e) =>{
+            e.preventDefault();
+              $button.disabled = true; // ✅ 버튼 잠금
+
+            $result.innerHTML = '당첨 숫자: ';
+            $bonus.innerHTML = '보너스 숫자: ';
+
+            // $result.textContent = '당첨 숫자: ';
+            // $bonus.textContent = '보너스 숫자: ';
+
+
+            const input = $input.value;
+            // const input = e.target.inputtag.value; name 속성으로도 접근 가능
+            if(!input) {
+                alert('로또 번호를 입력하세요!');
+                return;
+            }
+            if(input.split(',').length !== 6) {
+                alert('로또 번호는 6개를 입력해야 합니다!');
+                return;
+            }
+            if(new Set(input.split(',').map(v => parseInt(v.trim()))).size !== 6) {
+                alert('로또 번호는 중복되지 않아야 합니다!');
+                return;
+            }
+            const numbers = input.split(',').map(v => parseInt(v.trim()));
+            if(numbers.some(v => v < 1 || v > 45)) { // find도 가능
+                alert('로또 번호는 1부터 45 사이의 숫자여야 합니다!');
+                return;
+            }
+            if (numbers.some(v => Number.isNaN(v))) {
+                alert('모든 입력은 숫자여야 합니다!');
+                return;
+            }
+
+            const lottoNumbers = Array.from({length: 45}, (_, i) => i + 1);
+        //  const shuffled = lottoNumbers.sort(() => Math.random() - 0.5); // 간단한 셔플
+            const shuffled = [];
+            while(lottoNumbers.length > 0) {
+                const idx = Math.floor(Math.random() * lottoNumbers.length);
+                const spliced = lottoNumbers.splice(idx, 1)[0]; // splice로 제거하면서 반환
+                shuffled.push(spliced);
+            }
+
+            const winballs = shuffled.slice(0, 6).sort((a, b) => a - b);
+            const bonus = shuffled[6];
+
+            try { // 비동기 함수를 동기처럼 사용하기 
+                for(let i = 0; i < winballs.length; i++) {
+                    await delay(1000);  // 문제가 없다면 여긴 정상 작동
+                    drawBalls(winballs[i], $result);
+                }
+
+                await delay(1000);
+                drawBalls(bonus, $bonus);
+
+                await delay(0); // alert 메서드는 화면을 그리는 동작보다 먼저 실행돼서 화면이 그려지기까지 대기 
+            } catch (err) {
+                alert('🚨 에러 발생: ' + err.message);
+                $button.disabled = false;
+                return;
+            }
+
+
+
+
+            // const drawBalls = (numbers, $target) => {  // 비동기 함수 방식 
+            //     const $ball = document.createElement('div');
+            //     $ball.className = 'ball';
+            //     $ball.textContent = numbers;
+            //     $target.appendChild($ball);
+            // };
+
+            // for(let i = 0; i<winballs.length; i++){
+            //     setTimeout(() => {
+            //         drawBalls(winballs[i], $result);
+            //     }, i * 1000);
+            // }
+
+            // // for(let i = 0; i<winballs.length; i++){
+            // //     setTimeout( drawBalls(winballs[i], $result), i * 1000);
+            // // } 이렇게 바꾸려면 drawBalls 함수를  함수를 반환하는 형태로 바꿔야함
+
+            // setTimeout(() => {
+            //     drawBalls(bonus, $bonus);
+            // }, 7000);
+
+            let count = 0;
+            numbers.forEach((v) => {
+                if(winballs.includes(v)) {
+                    count++;
+                }
+            });
+
+            if(count === 6) {
+                alert('1등입니다!');
+            } else if(count === 5) {
+                if(winballs.includes(bonus)) {
+                    alert('2등입니다!');
+                } else {
+                    alert('3등입니다!');
+                }
+            } else if(count === 4) {
+                alert('4등입니다!');
+            } else if(count === 3) {
+                alert('5등입니다!');
+            } else {
+                alert('꽝입니다!');
+            }
+
+            $button.disabled = false; // ✅ 버튼 잠금 해제
+            // $input.value = ''; // 입력창 초기화
+            // $input.focus(); // 입력창에 포커스
+
+        });
+
+
+    </script>
+</body>
+</html>
