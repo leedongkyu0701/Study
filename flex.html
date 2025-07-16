@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Flexbox 실습 예제</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 30px;
+    }
+
+    h2 {
+      margin-top: 60px;
+    }
+
+    .container {
+      border: 2px dashed #999;
+      padding: 20px;
+      margin-bottom: 30px;
+      height: 150px;
+      display: flex;
+      gap: 10px;
+      background: #f5f5f5;
+    }
+
+    .box {
+      background-color: steelblue;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      line-height: 50px;
+      height: 50px;
+      flex-shrink: 0;
+    }
+
+    .box.small { width: 50px; }
+    .box.medium { width: 100px; }
+    .box.large { width: 150px; }
+
+    /* 실험용 배경색 */
+    .bg-light {
+      background: #e2f0ff;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>💡 Flexbox 기본 실습</h1>
+
+  <!-- 1. 기본 가로 정렬 -->
+  <h2>1. 기본 가로 정렬 (flex-direction: row)</h2>
+  <div class="container" style="flex-direction: row;">
+    <div class="box small">1</div>
+    <div class="box medium">2</div>
+    <div class="box large">3</div>
+  </div>
+
+  <!-- 2. 가운데 정렬 -->
+  <h2>2. 가로+세로 가운데 정렬</h2>
+  <div class="container" style="justify-content: center; align-items: center;">
+    <div class="box medium">중앙</div>
+  </div>
+
+  <!-- 3. 양쪽 정렬 -->
+  <h2>3. 양쪽 정렬 (space-between)</h2>
+  <div class="container" style="justify-content: space-between;">
+    <div class="box small">왼</div>
+    <div class="box small">중</div>
+    <div class="box small">오</div>
+  </div>
+
+  <!-- 4. column 정렬 -->
+  <h2>4. 세로 방향 (flex-direction: column)</h2>
+  <div class="container bg-light" style="flex-direction: column; height: auto;">
+    <div class="box medium">위</div>
+    <div class="box medium">아래</div>
+  </div>
+
+  <!-- 5. flex-grow 활용 (비율 분배) -->
+  <h2>5. 비율 나누기 (flex: 1)</h2>
+  <div class="container">
+    <div class="box" style="flex: 1;">1</div>
+    <div class="box" style="flex: 2;">2 (2배)</div>
+    <div class="box" style="flex: 1;">1</div>
+  </div>
+
+  <!-- 6. 줄바꿈 허용 (flex-wrap: wrap) -->
+  <h2>6. 줄바꿈 허용 (flex-wrap: wrap)</h2>
+  <div class="container" style="flex-wrap: wrap; width: 300px;">
+    <div class="box medium">1</div>
+    <div class="box medium">2</div>
+    <div class="box medium">3</div>
+    <div class="box medium">4</div>
+  </div>
+
+</body>
+</html>

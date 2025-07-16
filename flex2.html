@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Flex vs Flex: 0 1 auto 비교</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 30px;
+    }
+
+    h2 {
+      margin-top: 50px;
+    }
+
+    .container {
+      display: flex;
+      border: 2px dashed #aaa;
+      margin-bottom: 40px;
+      height: 80px;
+      gap: 10px;
+      padding: 10px;
+      
+    }
+
+    .item {
+      background: steelblue;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      line-height: 60px;
+    }
+
+    .fixed {
+      width: 100px;
+    }
+
+    .label {
+      margin-top: -20px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔍 flex: 1 vs flex: 0 1 auto 비교</h1>
+
+  <!-- 예제 1 -->
+  <h2>예제 1: flex: 1</h2>
+  <div class="label">남는 공간을 똑같이 나눔 (1:1:1)</div>
+  <div class="container">
+    <div class="item" style="flex: 1;">A</div>
+    <div class="item" style="flex: 1;">B</div>
+    <div class="item" style="flex: 1;">C</div>
+  </div>
+
+  <!-- 예제 2 -->
+  <h2>예제 2: flex: 0 1 auto (기본 크기 유지)</h2>
+  <div class="label">내용 크기만큼만 차지 (자동 너비)</div>
+  <div class="container">
+    <div class="item" style="flex: 0 1 auto;">짧음</div>
+    <div class="item" style="flex: 0 1 auto;">중간 길이</div>
+    <div class="item" style="flex: 0 1 auto;">꽤 긴 내용입니다</div>
+  </div>
+
+  <!-- 예제 3 -->
+  <h2>예제 3: 혼합 (고정 + flex: 1)</h2>
+  <div class="label">왼쪽은 고정 너비, 나머지는 나눠 가짐</div>
+  <div class="container">
+    <div class="item fixed">고정</div>
+    <div class="item" style="flex: 1;">유동</div>
+    <div class="item" style="flex: 1;">유동</div>
+  </div>
+
+</body>
+</html>

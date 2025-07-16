@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Grid 실전 예제 모음</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 30px;
+      background: #f5f5f5;
+    }
+
+    h2 {
+      margin-top: 60px;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
+
+    /* 공통 스타일 */
+    .box {
+      background: #e0e0e0;
+      padding: 20px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 8px;
+    }
+
+    /* 1. 카드형 그리드 갤러리 */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    /* grid-template-rows는 언제 써야 할까?
+    높이를 고정하거나 제한하고 싶을 때
+    반복되는 행을 명확히 정의하고 싶을 때
+    줄마다 높이를 다르게 하고 싶을 때
+    grid-template-rows: 100px 200px auto; */
+
+    /* 2. 전체 페이지 레이아웃 */
+    .layout {
+      display: grid;
+      grid-template-areas:
+        "header header"
+        "nav    main"
+        "footer footer";
+      grid-template-columns: 200px 1fr;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+      height: 300px;
+      margin-top: 20px;
+    }
+
+    .layout > * {
+      padding: 20px;
+      border-radius: 8px;
+      color: white;
+    }
+
+    header  { grid-area: header; background: #007acc; }
+    nav     { grid-area: nav; background: #4caf50; }
+    main    { grid-area: main; background: #00ffff; color: #333; }
+    footer  { grid-area: footer; background: #777; }
+
+    /* 3. 폼 형식 그리드 */
+    .form {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 10px 16px;
+      max-width: 400px;
+      margin-top: 20px;
+    }
+
+    label {
+      text-align: right;
+      padding-top: 8px;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📦 CSS Grid 실전 예제 모음</h1>
+
+  <!-- 예제 1: 카드형 갤러리 -->
+  <h2>1. 카드형 갤러리</h2>
+  <div class="gallery">
+    <div class="box">카드 1</div>
+    <div class="box">카드 2</div>
+    <div class="box">카드 3</div>
+    <div class="box">카드 4</div>
+    <div class="box">카드 5</div>
+  </div>
+
+  <!-- 예제 2: 전체 레이아웃 -->
+  <h2>2. 페이지 전체 레이아웃</h2>
+  <div class="layout">
+    <header>Header</header>
+    <nav>Sidebar</nav>
+    <main>Main Content Area</main>
+    <footer>Footer</footer>
+  </div>
+
+  <!-- 예제 3: 그리드 기반 입력 폼 -->
+  <h2>3. 그리드 기반 입력 폼</h2>
+  <form class="form">
+    <label for="name">이름</label>
+    <input id="name" type="text" placeholder="이름 입력">
+
+    <label for="email">이메일</label>
+    <input id="email" type="email" placeholder="이메일 입력">
+
+    <label for="phone">전화번호</label>
+    <input id="phone" type="tel" placeholder="전화번호 입력">
+  </form>
+
+</body>
+</html>

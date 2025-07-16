@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>반응형 레이아웃 예제</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .layout {
+      display: flex;
+    }
+
+    .nav {
+      width: 200px;
+      background: #333;
+      color: white;
+      padding: 20px;
+    }
+
+    .main {
+      flex: 1;
+      padding: 20px;
+      background: #f1f1f1;
+    }
+
+    /* ✅ 미디어 쿼리 - 모바일 대응 */
+    @media (max-width: 768px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .nav {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="nav">네비게이션</div>
+    <div class="main">
+      <h1>본문 콘텐츠</h1>
+      <p>화면 크기에 따라 레이아웃이 변합니다.</p>
+    </div>
+  </div>
+</body>
+</html>
