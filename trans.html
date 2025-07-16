@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>부모 자식 transform 영향</title>
+<style>
+  .parent {
+    width: 200px;
+    height: 200px;
+    background: lightblue;
+    margin: 50px auto;
+    perspective: 600px; /* 3D 효과를 위해 추가 */
+  }
+  .inner {
+    width: 100%;
+    height: 100%;
+    background: salmon;
+    transform-style: preserve-3d;
+    transition: transform 1s;
+  }
+  .child {
+    width: 100px;
+    height: 100px;
+    background: gold;
+    margin: 50px auto;
+    backface-visibility: hidden;
+    transform: rotateY(180deg); /* 자식은 기본 180도 뒤집혀 있음 */
+  }
+</style>
+</head>
+<body>
+  <div class="parent" id="parent">
+    <div class="inner" id="inner">
+      <div class="child"></div>
+    </div>
+  </div>
+
+  <button id="toggle">부모 180도 회전 토글</button>
+
+  <script>
+    const inner = document.getElementById('inner');
+    let flipped = false;
+
+    document.getElementById('toggle').addEventListener('click', () => {
+      flipped = !flipped;
+      if (flipped) {
+        inner.style.transform = 'rotateY(180deg)';
+      } else {
+        inner.style.transform = 'rotateY(0deg)';
+      }
+    });
+  </script>
+</body>
+</html>
